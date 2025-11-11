@@ -14,7 +14,16 @@ Route::get('/', function () {
 Route::get('/jobs', function () {
     Log::info('Jobs page visited');
     // This is an example of eager loading. We are getting all the necessary data that we want to manipulate. Don't just use the old method of just passing through jobs as data variable of the return view section
-    $jobs = Job::with('employer')->get();
+    
+    // Paginates all of the records
+    //$jobs = Job::with('employer')->paginate(10);
+    
+    // Cursor based pagination will mess up the url
+    //$jobs = Job::with('employer')->cursorPaginate(10);
+
+    //Saves loading all of the page numbers
+    $jobs = Job::with('employer')->simplePaginate(10);
+    
     return view(
         'jobs', [
             'jobs' => $jobs
