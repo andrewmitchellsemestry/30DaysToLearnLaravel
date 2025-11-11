@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // We can add things here to prevent them from being used in the app. For example, we can disable eager loading
+        
     }
 }

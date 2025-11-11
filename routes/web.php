@@ -1,10 +1,45 @@
 <?php
 
+use App\Models\Job;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     Log::info('Welcome page visited');
-    return view('welcome');
+    $jobs = Job::all();
+    dd($jobs[0]);
+    return view('home');
+});
+
+Route::get('/jobs', function () {
+    Log::info('Jobs page visited');
+    // This is an example of eager loading. We are getting all the necessary data that we want to manipulate. Don't just use the old method of just passing through jobs as data variable of the return view section
+    $jobs = Job::with('employer')->get();
+    return view(
+        'jobs', [
+            'jobs' => $jobs
+        ]
+    );
+    /**
+     * return view(
+     *     'jobs', [
+     *          'jobs' => Job:all()
+     *      ]
+     * )
+     * 
+     * This is the method that does not use eager loading. It will run an SQL query for EVERY job.
+     */
+});
+
+Route::get('/contact', function () {
+    Log::info('Contact page visited');
+    return view('contact');
+});
+
+Route::get('/jobs/{id}', function ($id) {
+    $job = Job::find($id);
+    Log::info('Job page visited');
+    return view('job', ['job' => $job]);
 });
 
 Route::get('/info', function () {
