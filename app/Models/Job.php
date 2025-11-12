@@ -12,10 +12,14 @@ class Job extends Model
     use HasFactory;
 
     protected $table = 'job_listings';
-    protected $fillable = [
-        'title',
-        'salary'
-    ];
+
+    protected $guarded = [];
+    //  We can remove the need for the fillable fields to be entered by using the guarded array
+    //  protected $fillable = [
+    //     'employer_id',
+    //     'title',
+    //     'salary'
+    // ];
 
     public function employer() {
         return $this->belongsTo(Employer::class);

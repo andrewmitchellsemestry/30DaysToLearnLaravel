@@ -26,10 +26,10 @@ Route::get('/jobs', function () {
     //$jobs = Job::with('employer')->cursorPaginate(10);
 
     //Saves loading all of the page numbers
-    $jobs = Job::with('employer')->simplePaginate(10);
+    $jobs = Job::with('employer')->latest()->simplePaginate(10);
     
     return view(
-        'jobs', [
+        'jobs.index', [
             'jobs' => $jobs
         ]
     );
@@ -44,15 +44,32 @@ Route::get('/jobs', function () {
      */
 });
 
-Route::get('/contact', function () {
-    Log::info('Contact page visited');
-    return view('contact');
+Route::get('/jobs/create', function () {
+    Log::info('Job create page visited');
+    return view('jobs.create');
 });
 
 Route::get('/jobs/{id}', function ($id) {
     $job = Job::find($id);
-    Log::info('Job page visited');
-    return view('job', ['job' => $job]);
+    Log::info('Job specific page visited');
+    return view('jobs.show', ['job' => $job]);
+});
+
+Route::post('/jobs', function() {
+
+    // The request() object lets us access data from the form data
+    Job::create([
+        'title' => request('title'),
+        'salary' => request('salary'),
+        'employer_id' => 1
+    ]);
+
+    return redirect('/jobs');
+});
+
+Route::get('/contact', function () {
+    Log::info('Contact page visited');
+    return view('contact');
 });
 
 Route::get('/info', function () {
