@@ -1,21 +1,29 @@
 <?php
 
-use App\Http\Controllers\JobController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JobController;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\RegisteredUserController;
 
 Route::view('/', 'home');
 Route::resource('jobs', JobController::class); // This will give us all of the resourceful routes
 Route::view('contact', 'contact');
 
+// Auth
+Route::get('/register', [RegisteredUserController::class, 'create']);
+Route::post('/register', [RegisteredUserController::class, 'store']);
+
+Route::get('/login', [SessionController::class, 'create']);
+Route::post('/login', [SessionController::class, 'store']);
+
 Route::get('/info', function () {
     Log::info('Phpinfo page visited');
     return phpinfo();
 });
-
 Route::get('/health', function () {
     $status = [];
 
