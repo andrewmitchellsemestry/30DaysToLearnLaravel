@@ -56,6 +56,10 @@ Route::get('/jobs/{id}', function ($id) {
 });
 
 Route::post('/jobs', function() {
+    request()->validate([
+        'title' => ['required', 'min:3'],
+        'salary' => ['required'] 
+    ]);
 
     // The request() object lets us access data from the form data
     Job::create([
