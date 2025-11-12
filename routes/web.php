@@ -1,118 +1,15 @@
 <?php
 
-use App\Models\Job;
-use Illuminate\Support\Arr;
+use App\Http\Controllers\JobController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
-Route::get('/', function () {
-    Log::info('Welcome page visited');
-    $jobs = Job::all();
-    dd($jobs[0]);
-    return view('home');
-});
-
-
-// Show all
-Route::get('/jobs', function () {
-    Log::info('Jobs page visited');
-    // This is an example of eager loading. We are getting all the necessary data that we want to manipulate. Don't just use the old method of just passing through jobs as data variable of the return view section
-    
-    // Paginates all of the records
-    //$jobs = Job::with('employer')->paginate(10);
-    
-    // Cursor based pagination will mess up the url
-    //$jobs = Job::with('employer')->cursorPaginate(10);
-
-    //Saves loading all of the page numbers
-    $jobs = Job::with('employer')->latest()->simplePaginate(10);
-    
-    return view(
-        'jobs.index', [
-            'jobs' => $jobs
-        ]
-    );
-    /**
-     * return view(
-     *     'jobs', [
-     *          'jobs' => Job:all()
-     *      ]
-     * )
-     * 
-     * This is the method that does not use eager loading. It will run an SQL query for EVERY job.
-     */
-});
-
-// Show create
-Route::get('/jobs/create', function () {
-    Log::info('Job create page visited');
-    return view('jobs.create');
-});
-
-// Show one job
-Route::get('/jobs/{id}', function ($id) {
-    Log::info('Job specific page visited');
-    $job = Job::find($id);
-    return view('jobs.show', ['job' => $job]);
-});
-
-// Create
-Route::post('/jobs', function() {
-    Log::info('Job create request');
-    request()->validate([
-        'title' => ['required', 'min:3'],
-        'salary' => ['required', 'numeric:strict'] 
-    ]);
-
-    // The request() object lets us access data from the form data
-    Job::create([
-        'title' => request('title'),
-        'salary' => request('salary'),
-        'employer_id' => 1
-    ]);
-
-    return redirect('/jobs');
-});
-
-// Edit
-Route::get('/jobs/{id}/edit', function ($id) {
-    Log::info('Job edit page visited');
-    $job = Job::find($id);
-    return view('jobs.edit', ['job' => $job]);
-});
-
-// Update
-Route::patch('/jobs/{id}', function($id) {
-    Log::info('Job update request');
-    request()->validate([
-        'title' => ['required', 'min:3'],
-        'salary' => ['required', 'numeric:strict'] 
-    ]);
-    
-    $job = Job::findOrFail($id);
-
-    $job->update([
-        'title' => request('title'),
-        'salary' => request('salary')
-    ]);
-
-    return redirect('/jobs/' . $job->id);
-});
-
-// Delete
-Route::delete('/jobs/{id}', function ($id) {
-    Log::info('Job delete request');
-    $job = Job::findOrFail($id)->delete();
-    return redirect('/jobs');
-});
-
-Route::get('/contact', function () {
-    Log::info('Contact page visited');
-    return view('contact');
-});
+Route::view('/', 'home');
+Route::resource('jobs', JobController::class); // This will give us all of the resourceful routes
+Route::view('contact', 'contact');
 
 Route::get('/info', function () {
     Log::info('Phpinfo page visited');
@@ -170,3 +67,26 @@ Route::get('/health', function () {
 
     return response()->json($status, $httpStatus);
 });
+
+
+// Route::resourse('jobs', JobController::class, [
+//     'except' => ['edit']
+// ]); // Allows us to tailor which resourceful routes we want
+
+// Lets us group together controllers to contain them in a single place
+// Route::controller(JobController::class)->group(function() {
+//     Route::get('/jobs', 'index'); 
+//     Route::get('/jobs/create', 'create');
+//     Route::get('/jobs/{job}', 'show');
+//     Route::post('/jobs', 'store');
+//     Route::get('/jobs/{job}/edit', 'edit');
+//     Route::patch('/jobs/{job}', 'update');
+//     Route::delete('/jobs/{job}', 'destroy');
+// });
+// Route::get('/jobs/create', [JobController::class, 'create']); - the longer way of doing the above
+
+// Equivalent to Route::view('/', 'home');
+// Route::get('/', function () {
+//     Log::info('Welcome page visited');
+//     return view('home');
+// });
