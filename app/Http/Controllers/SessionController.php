@@ -19,7 +19,7 @@ class SessionController extends Controller
             'password' => ['required']
         ]);
 
-        if (! $authorised = Auth::attempt($validatedAttributes)) {
+        if (! Auth::attempt($validatedAttributes)) {
             throw ValidationException::withMessages([
                 'email' => 'Sorry, those credentials do not match'
             ]);
