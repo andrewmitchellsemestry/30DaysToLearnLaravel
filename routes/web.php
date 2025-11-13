@@ -8,6 +8,22 @@ use App\Http\Controllers\JobController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\RegisteredUserController;
+use App\Jobs\TranslateJob;
+use App\Models\Job;
+use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\Mail;
+
+Route::get('test', function () {
+
+    $job = Job::first();
+
+    // dispatch(function() {
+    //     Logger('Hello from the queue');
+    // })->delay(5);
+
+    TranslateJob::dispatch($job);
+
+});
 
 Route::view('/', 'home');
 Route::view('contact', 'contact');
