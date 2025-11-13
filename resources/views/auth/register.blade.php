@@ -5,21 +5,22 @@
 
     <div class="space-y-4">
 
-        <form method="POST" action="">
+        <form method="POST" action="/register">
         <!-- This @csrf is used to prevent CSRF. If you see a 419 error page, it is probably due to this being missing -->
         @csrf
+        @method('POST')
 
             <div class="space-y-12">
                 <div class="border-b border-white/10 pb-12">
                     <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         <x-form-field>
-                            <x-form-label for='name'>Name</x-form-label>
+                            <x-form-label for='first_name'>Name</x-form-label>
                             
                             <div class="mt-2">
 
-                                <x-form-input id="name" name="name" placeholder="Callie" required/>
+                                <x-form-input id="first_name" name="first_name" type=text placeholder="Callie" required/>
                                 
-                                <x-form-error name="name"/>
+                                <x-form-error name="first_name"/>
                                 
                             </div>
                         </x-form-field>

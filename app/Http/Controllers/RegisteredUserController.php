@@ -2,30 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
 
 class RegisteredUserController extends Controller
 {
-    public function create() {
+    public function create()
+    {
         return view('auth.register');
     }
 
-    public function store() {
-        request()->validate([
-            'name' => ['required'],
+    public function store()
+    {
+        $validatedAttributes = request()->validate([
+            'first_name' => ['required'],
             'last_name' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required'],
-            'password_confirmation' => ['required']
+            'password' => ['required', Password::min(5), 'confirmed'], // confirmed matches setting for x_confirmation field
         ]);
 
-        dd(request()->email);
+        // Create the user
+        $user = User::create($validatedAttributes);
 
-        //Check to see if the passwords are equal
-        if (request()->password !== request()->password_confirmation) {
-            
-        }
+        // log in
+        Auth::login($user);
 
         //Return the view, maybe redirect home
+        return redirect('/jobs');
     }
 }
